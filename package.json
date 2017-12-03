@@ -1,0 +1,8 @@
+{
+  "name": "",
+  "version": "",
+  "dependencies": {
+    "ali-oss": "^4.11.2",
+    "co": "^4.6.0"
+  }
+}

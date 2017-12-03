@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <!-- oss 上传文件 JavaScript 库 -->
+    <script src="http://gosspublic.alicdn.com/aliyun-oss-sdk-4.3.0.min.js"></script>
+    <!--<script src="bower_components/ali-oss/dist/aliyun-oss-sdk.min.js"></script>-->
+    <!--<script src="http://gosspublic.alicdn.com/aliyun-oss-sdk-4.4.4.min.js"></script>-->
+    <!--<script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>-->
+
+</head>
+<body>
+    <input type="file" id="file" />
+    <script type="text/javascript">
+        document.getElementById('file').addEventListener('change', function (e) {
+            //console.log(e)
+            var file = e.target.files[0];
+            var storeAs = 'p'+ new Date().getTime();
+            OSS.urllib.request("http://47.92.87.199:8081/xczfw-app/rest/stsacs/getStsACS.json",{method: 'GET'},function (err, response) {
+                if (err) {
+                    return alert(err);
+                }
+                try {
+                    result = JSON.parse(response);
+                } catch (e) {
+                    return alert('parse sts response info error: ' + e.message);
+                }
+
+                var client = new OSS.Wrapper({
+                    accessKeyId: result.AccessKeyId,
+                    accessKeySecret: result.AccessKeySecret,
+                    stsToken: result.SecurityToken,
+                    endpoint: 'http://oss-cn-zhangjiakou.aliyuncs.com',
+                    bucket: 'picturexczf'
+                });
+                client.multipartUpload(storeAs, file).then(function (result) {
+                    console.log(result);
+                }).catch(function (err) {
+                    console.log(err);
+                });
+
+                client.list({
+                    'max-keys': 10
+                }).then(function (result) {
+                    console.log(result);
+                }).catch(function (err) {
+                    console.log(err);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
